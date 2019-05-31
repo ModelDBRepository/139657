@@ -1,0 +1,61 @@
+// SPN neuron model
+// ---------------------------------------------
+//
+// This model simulates rebound action potential firing in SPN neurons
+// following prolonged inhibition from the MNTB.
+//
+// Reference:
+// The Sound of Silence: ionic mechanisms encoding sound termination.
+// Cornelia Kopp-Scheinpflug, Adam JB Tozer, Susan W Robinson
+// Bruce L Tempel, Matthias H Hennig and Ian D Forsythe
+// Neuron, in press (2011)
+//
+// Contact:
+// Matthias H. Hennig, University of Edinburgh, 2011
+// m.hennig@ed.ac.uk
+// mhhennig@gmail.com
+//
+// with contributions from:
+// Sarah J. Griffin, MRC Toxicology Unit, Leicester
+
+{
+plotwin = new Graph(0)
+plotwin.size(0,300,-140,40)
+windows[1] = plotwin
+//{plotwin.view(450, -140, 300, 180, 417, 24, 493.44, 240.64)}
+{plotwin.view(150, -140, 600, 180, 417, 24, 493.44, 240.64)}
+graphList[0].append(plotwin)
+plotwin.save_name("graphList[0].")
+plotwin.addexpr("v(.5)", 1, 1, 0.8, 0.9, 2)
+}
+
+{
+plotwin = new Graph(0)
+plotwin.size(-10,300,-0.0045,0.0035)
+windows[2] = plotwin
+//{plotwin.view(450, -0.06, 300, 0.07, 417, 331, 493.44, 200.32)}
+{plotwin.view(150, -0.06, 600, 0.07, 417, 331, 493.44, 200.32)}
+graphList[1].append(plotwin)
+plotwin.save_name("graphList[1].")
+plotwin.addvar("soma.i_sjg_ih( 0.5 )", 1, 1, 0.8, 0.9, 2)
+plotwin.addvar("soma.i_lva( 0.5 )", 2, 1, 0.8, 0.9, 2)
+plotwin.addvar("soma.ik_HT( 0.5 )", 3, 1, 0.8, 0.9, 2)
+plotwin.addvar("soma.ik_LT( 0.5 )", 4, 1, 0.8, 0.9, 2)
+//if(object_id(fl)!=0) plotwin.addvar("fl.i", 5, 1, 0.8, 0.9, 2)
+}
+
+{
+plotwin = new Graph(0)
+plotwin.size(0,310,0,0.9)
+windows[3] = plotwin
+//{plotwin.view(450, 0, 300, 0.9, 417, 596, 493.44, 130.24)}
+{plotwin.view(150, 0, 600, 1, 417, 596, 493.44, 130.24)}
+graphList[2].append(plotwin)
+plotwin.save_name("graphList[2].")
+plotwin.addvar("soma.m_lva( 0.5 )", 1, 1, 0.8, 0.9, 2)
+plotwin.addvar("soma.h_lva( 0.5 )", 1, 1, 0.8, 0.9, 2)
+plotwin.addvar("soma.m_sjg_na( 0.5 )", 3, 1, 0.8, 0.9, 2)
+plotwin.addvar("soma.h_sjg_na( 0.5 )", 4, 1, 0.8, 0.9, 2)
+plotwin.addvar("soma.p_sjg_na( 0.5 )", 5, 1, 0.8, 0.9, 2)
+}
+

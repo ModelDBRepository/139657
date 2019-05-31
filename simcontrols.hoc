@@ -1,0 +1,86 @@
+// SPN neuron model
+// ---------------------------------------------
+//
+// This model simulates rebound action potential firing in SPN neurons
+// following prolonged inhibition from the MNTB.
+//
+// Reference:
+// The Sound of Silence: ionic mechanisms encoding sound termination.
+// Cornelia Kopp-Scheinpflug, Adam JB Tozer, Susan W Robinson
+// Bruce L Tempel, Matthias H Hennig and Ian D Forsythe
+// Neuron, in press (2011)
+//
+// Contact:
+// Matthias H. Hennig, University of Edinburgh, 2011
+// m.hennig@ed.ac.uk
+// mhhennig@gmail.com
+//
+// with contributions from:
+// Sarah J. Griffin, MRC Toxicology Unit, Leicester
+
+// simulation parameters
+// ---------------------------------------------
+{
+xpanel("soma(0 - 1) (Parameters)", 0)
+xlabel("soma(0 - 1) (Parameters)")
+xlabel("nseg = 1")
+xvalue("L","soma.L", 1,"define_shape()", 0, 0 )
+xvalue("Ra","soma.Ra", 1,"soma.Ra += 0", 0, 1 )
+xvalue("diam","soma.diam", 1,"", 0, 0 )
+xvalue("cm","soma.cm", 1,"", 0, 0 )
+xvalue("g_pas","soma.g_pas", 1,"", 0, 0 )
+xvalue("e_pas","soma.e_pas", 1,"", 0, 0 )
+xvalue("gnabar_sjg_na","soma.gnabar_sjg_na", 1,"", 0, 0 )
+xvalue("gbar_HT","soma.gbar_HT", 1,"", 0, 0 )
+xvalue("gbar_LT","soma.gbar_LT", 1,"", 0, 0 )
+xvalue("ghbar_sjg_ih","soma.ghbar_sjg_ih", 1,"", 0, 0 )
+xvalue("sjgeh_sjg_ih","soma.sjgeh_sjg_ih", 1,"", 0, 0 )
+xvalue("gbar_lva","soma.gbar_lva", 1,"", 0, 0 )
+xvalue("Erev_lva","soma.Erev_lva", 1,"", 0, 0 )
+xvalue("V_s_lva","soma.V_s_lva", 1,"", 0, 0 )
+xpanel(144,89)
+}
+
+
+// run selected stimulus protocols
+{
+xpanel("RunControl", 0)
+v_init = -60
+tstop = 1000
+dt = 0.025
+xbutton("50 hz","myrun(NetStim[0].interval=20)")
+xbutton("100 hz","myrun(NetStim[0].interval=10)")
+xbutton("200 hz","myrun(NetStim[0].interval=5)")
+xbutton("300 hz","myrun(NetStim[0].interval=3.3)")
+xbutton("400 hz","myrun(NetStim[0].interval=2.5)")
+xpanel(1,96)
+}
+
+// set stimulation parameters
+{
+xpanel("Stimulation", 0)
+xlabel("TriggeredIClamp[0] at a(0.5)")
+xvalue("amp","PointProcessManager[0].pp.amp", 1,"", 0, 1 )
+xvalue("dur","PointProcessManager[0].pp.dur", 1,"", 0, 1 )
+xvalue("num","NetStim[0].number", 1,"", 0, 1 )
+if(object_id(fl)!=0) {
+    xlabel("mhh_Gfluct at a(0.5)")
+    xvalue("noise dc","fl.g_e0", 1,"", 0, 1 )
+    xvalue("noise s-d","fl.std_e", 1,"", 0, 1 )
+    xvalue("noise tau","fl.tau_e", 1,"", 0, 1 )
+}
+
+if(object_id(syn[0])!=0) {
+    xlabel("synapses")
+    xvalue("interval","syninterval", 1,"", 0, 1 )
+    xvalue("number","synnum", 1,"", 0, 1 )
+    xvalue("noise","synnoise", 1,"", 0, 1 )
+    xvalue("conductance","synconductance", 1,"", 0, 1 )
+}
+if(object_id(synstim2)!=0) {
+    xvalue("gap","gap", 1,"", 0, 1 )
+}
+
+xpanel(4,320)
+}
+

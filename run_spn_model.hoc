@@ -1,0 +1,140 @@
+// SPN neuron model
+// ---------------------------------------------
+//
+// This model simulates rebound action potential firing in SPN neurons
+// following prolonged inhibition from the MNTB.
+//
+// Reference:
+// The Sound of Silence: ionic mechanisms encoding sound termination.
+// Cornelia Kopp-Scheinpflug, Adam JB Tozer, Susan W Robinson
+// Bruce L Tempel, Matthias H Hennig and Ian D Forsythe
+// Neuron, in press (2011)
+//
+// Contact:
+// Matthias H. Hennig, University of Edinburgh, 2011
+// m.hennig@ed.ac.uk
+// mhhennig@gmail.com
+//
+// with contributions from:
+// Sarah J. Griffin, MRC Toxicology Unit, Leicester
+
+
+load_file("nrngui.hoc")
+load_file("pointman.hoc")
+
+objectvar input, plotwin
+objectvar windows[5]
+objref ns
+objref fl
+objref syn[21], synstim[21], synstim2[21]
+objref netsynstim[21], netsynstim2[21]
+
+// definitions for spike counting
+objref spiketimes
+spiketimes = new Vector(100)
+objref aps
+objref spikestmp
+
+// default synapse parameters
+syninterval = 10  // stimulus interval (ms)
+synnum = 10       // number of stimuli
+synnoise = 0      // could be used to introduce some spike jitter
+synconductance = 4e-3 // umho
+
+// default gap between the two stimulus trains
+gap = 10
+
+// how many inhibitory synapses does our neuron have?
+nsyns = 14
+
+// set up the model neurons (defaut parameters)
+// ---------------------------------------------
+
+load_file("spn_neuron.hoc")
+
+
+// Stimuli + Inputs
+// ---------------------------------------------
+
+// current injection
+// this is not used by default, but can be used to simulate voltage
+// clamp conditions when Ih is blocked
+load_file("current_inj.hoc")
+
+// synapses
+load_file("synapses.hoc")
+
+// noise source (simulates excitatory synaptic noise)
+load_file("conductance_noise.hoc")
+
+// set up the spike detector
+// ---------------------------------------------
+
+proc foundspike() {
+    print "called handle() at time ", t, " when soma.v(.5) = ", soma.v(.5)
+    spiketimes.x[nspikes] = t
+    nspikes = nspikes+1
+}
+
+aps = new NetCon(&v(0.5),spikestmp)
+aps.threshold = -10
+aps.record("foundspike()")
+
+// add the second stimulus (after the gap
+// ---------------------------------------------
+
+for i=0, nsyns {
+    synstim2[i] = new NetStims(0.5)
+    synstim2[i].start = 300+gap
+    synstim2[i].interval = syninterval
+    synstim2[i].number = synnum
+    synstim2[i].noise = synnoise
+    netsynstim2[i] = new NetCon(synstim2[i],syn[i])
+}
+
+// wrapper function to run a simulation
+// ---------------------------------------------
+
+proc myrun() {
+    tstop = 750 // duration of the simulation
+    nspikes = 0  // reset spike counter
+
+    // noise
+    fl.std_e = 0.0005
+    fl.tau_e = 2
+
+    syninterval = NetStim[0].interval	
+    
+    // set synapse parameters
+    for i=0, nsyns {
+	synstim[i].start = 300-syninterval*synnum
+	synstim[i].interval = syninterval
+	synstim[i].number = synnum
+	synstim[i].noise = synnoise
+	
+        synstim2[i].start = 300+gap
+	synstim2[i].interval = syninterval
+
+	netsynstim[i].weight = synconductance
+	netsynstim2[i].weight = synconductance
+    }
+
+    // run a simulation
+    finitialize(-60)
+    run()
+
+    // print out results summary
+    printf("time of 2 stimults: %g\n",200+syninterval*synnum+gap)
+    printf("number of spikes: %g\n",nspikes)
+    
+}
+
+
+// Simulation controls
+// ---------------------------------------------
+load_file("simcontrols.hoc")
+
+
+// plot windows
+// ---------------------------------------------
+load_file("allgraphs.hoc")

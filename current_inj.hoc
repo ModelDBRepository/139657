@@ -1,0 +1,49 @@
+// SPN neuron model
+// ---------------------------------------------
+//
+// This model simulates rebound action potential firing in SPN neurons
+// following prolonged inhibition from the MNTB.
+//
+// Reference:
+// The Sound of Silence: ionic mechanisms encoding sound termination.
+// Cornelia Kopp-Scheinpflug, Adam JB Tozer, Susan W Robinson
+// Bruce L Tempel, Matthias H Hennig and Ian D Forsythe
+// Neuron, in press (2011)
+//
+// Contact:
+// Matthias H. Hennig, University of Edinburgh, 2011
+// m.hennig@ed.ac.uk
+// mhhennig@gmail.com
+//
+// with contributions from:
+// Sarah J. Griffin, MRC Toxicology Unit, Leicester
+
+{soma input = new PointProcessManager(0)}
+{object_push(input)}
+{mt.select("TriggeredIClamp") i = mt.selected()
+ms[i] = new MechanismStandard("TriggeredIClamp")
+ms[i].set("dur", 100, 0)
+ms[i].set("amp", -0, 0)
+mt.select("TriggeredIClamp") i = mt.selected() maction(i)
+hoc_ac_ = 0.5
+sec.sec move() d1.flip_to(0)}
+{object_pop() doNotify()}
+{input = input.v1}
+objref input
+
+{soma input = new PointProcessManager(0)}
+{object_push(input)} 
+{mt.select("NetStim") i = mt.selected()
+ms[i] = new MechanismStandard("NetStim")
+ms[i].set("interval", 10, 0)
+ms[i].set("number", 10, 0)
+ms[i].set("start", 1000, 0) // 500
+ms[i].set("noise", 0, 0)
+mt.select("NetStim") i = mt.selected() maction(i)
+hoc_ac_ = 0.5
+sec.sec move() d1.flip_to(0)}
+{object_pop() doNotify()}
+{input = input.v1}
+objref input
+
+ns = new NetCon(NetStim[0], TriggeredIClamp[0], 0,0,0)
