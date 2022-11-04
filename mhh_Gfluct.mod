@@ -48,7 +48,6 @@ NEURON {
 	POINT_PROCESS mhh_Gfluct
 	RANGE g_e, E_e, g_e0, g_e1
 	RANGE std_e, tau_e, D_e
-	RANGE new_seed
 	NONSPECIFIC_CURRENT i
 }
 

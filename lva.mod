@@ -9,7 +9,7 @@ NEURON {
 	: NONSPECIFIC_CURRENT i
 	USEION ca WRITE  ica
 	RANGE Erev,g, gbar, i
-	RANGE k, alpha_1, alpha_2, beta_1, beta_2, V_s, taum, minf
+	RANGE k, alpha_1, alpha_2, beta_1, beta_2, V_s
 	GLOBAL mytaum, myminf
 }
 
